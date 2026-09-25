@@ -18,10 +18,10 @@ const CONFIG = {
   THRESHOLD_PERCENT: parseFloat(process.env.THRESHOLD_PERCENT || '0.5'),
 
   // Rolling window to measure the move over
-  WINDOW_SECONDS: parseInt(process.env.WINDOW_SECONDS || '60', 10),
+  WINDOW_SECONDS: parseInt(process.env.WINDOW_SECONDS || '10', 10),
 
-  // Minimum time between two alerts, so you're not spammed mid-move
-  COOLDOWN_SECONDS: parseInt(process.env.COOLDOWN_SECONDS || '30', 10),
+  // Minimum time between two alerts
+  COOLDOWN_SECONDS: parseInt(process.env.COOLDOWN_SECONDS || '45', 10),
 
   NTFY_TOPIC: process.env.NTFY_TOPIC || 'YOUR_NTFY_TOPIC',
 
@@ -107,7 +107,7 @@ function connect() {
       pruneBuffer(nowMs);
       checkForSpike(nowMs, quote);
 
-      console.log(`${new Date(nowMs).toLocaleTimeString()}  ${CONFIG.SYMBOL} = ${quote}`);
+    //   console.log(`${new Date(nowMs).toLocaleTimeString()}  ${CONFIG.SYMBOL} = ${quote}`);
     }
   });
 
