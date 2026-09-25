@@ -1,25 +1,28 @@
 /**
  * Deriv Synthetic Index Spike/Crash Monitor
- **/
+ * 
+**/
 require('dotenv').config();
 const WebSocket = require('ws');
-const fetch = require('node-fetch');
 
 // ─── CONFIG ────────────────────────────────────────────────────────────
 const CONFIG = {
   // Symbol to watch. Common synthetic indices:
-  SYMBOL: process.env.DERIV_SYMBOL || 'CRASH1000',
+  //  R_10, R_25, R_50, R_75, R_100          (Volatility Indices)
+  //  1HZ10V, 1HZ25V, ... 1HZ100V             (Volatility Indices (1s))
+  //  BOOM300N, BOOM500, BOOM1000             (Boom Indices)
+  //  CRASH300N, CRASH500, CRASH1000          (Crash Indices)
+  SYMBOL: process.env.DERIV_SYMBOL || 'R_75',
 
   // Alert if price moves this % or more within WINDOW_SECONDS
-  THRESHOLD_PERCENT: parseFloat(process.env.THRESHOLD_PERCENT || '0.0015'),
+  THRESHOLD_PERCENT: parseFloat(process.env.THRESHOLD_PERCENT || '0.5'),
 
   // Rolling window to measure the move over
   WINDOW_SECONDS: parseInt(process.env.WINDOW_SECONDS || '60', 10),
 
   // Minimum time between two alerts, so you're not spammed mid-move
-  COOLDOWN_SECONDS: parseInt(process.env.COOLDOWN_SECONDS || '40', 10),
+  COOLDOWN_SECONDS: parseInt(process.env.COOLDOWN_SECONDS || '30', 10),
 
-  
   NTFY_TOPIC: process.env.NTFY_TOPIC || 'YOUR_NTFY_TOPIC',
 
   NTFY_SERVER: process.env.NTFY_SERVER || 'https://ntfy.sh',
@@ -47,7 +50,8 @@ function checkForSpike(nowMs, currentPrice) {
 
   if (Math.abs(pctChange) >= CONFIG.THRESHOLD_PERCENT && cooledDown) {
     const isSpike = pctChange > 0;
-    const title = `${isSpike ? 'SPIKE 📈' : 'CRASH 📉'} — ${CONFIG.SYMBOL}`;
+    
+    const title = `${isSpike ? 'SPIKE' : 'CRASH'} - ${CONFIG.SYMBOL}`;
     const body =
       `${pctChange.toFixed(2)}% in the last ${CONFIG.WINDOW_SECONDS}s\n` +
       `${oldest.price} → ${currentPrice}`;
@@ -122,3 +126,4 @@ console.log(
   `over ${CONFIG.WINDOW_SECONDS}s, cooldown ${CONFIG.COOLDOWN_SECONDS}s`
 );
 connect();
+
